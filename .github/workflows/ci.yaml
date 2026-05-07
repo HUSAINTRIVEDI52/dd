@@ -26,17 +26,28 @@ jobs:
         with:
           node-version: 20
 
+      # PR Metadata Check (Merge Block Gate)
+      - name: Semantic PR Check
+        uses: amannn/action-semantic-pull-request@v5
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Install dependencies
       - name: Install Dependencies
         run: npm install
+
+      # Security: Dependency Audit
+      - name: Dependency Security Audit
+        run: npm audit --audit-level=high
 
       # Run ESLint
       - name: Run Lint Check
         run: npm run lint
 
-      # Run Tests
-      - name: Run Unit Tests
-        run: npm test
+      # Run Tests with Coverage
+      - name: Run Unit Tests & Coverage
+        run: npm run test:coverage
 
       # Check Formatting
       - name: Check Prettier Formatting
