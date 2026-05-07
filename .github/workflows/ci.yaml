@@ -40,7 +40,7 @@ jobs:
 
       # Check Formatting
       - name: Check Prettier Formatting
-        run: npx prettier . --check
+        run: npm run format
 
       # Secret Scanning
       - name: Run Gitleaks Secret Scan
