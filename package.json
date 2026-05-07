@@ -10,7 +10,8 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "vitest run",
-    "format": "prettier . --check"
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
