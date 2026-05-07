@@ -1,0 +1,66 @@
+name: Merge & Lint Checks
+
+on:
+  push:
+    branches:
+      - "**"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint-and-validate:
+    name: Run Linting & Merge Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Run ESLint
+      - name: Run Lint Check
+        run: npm run lint
+
+      # Run Tests
+      - name: Run Unit Tests
+        run: npm test
+
+      # Check Formatting
+      - name: Check Prettier Formatting
+        run: npx prettier . --check
+
+      # Secret Scanning
+      - name: Run Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+
+      # Build Validation
+      - name: Build Application
+        run: npm run build
+
+      # Docker Build Check
+      - name: Docker Build Validation
+        run: docker build -t app .
+
+      # Trivy Security Scan
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: app
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
